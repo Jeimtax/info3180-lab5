@@ -25,7 +25,7 @@ def index():
 
 @app.route('/api/v1/movies', methods=['POST'])
 def movies():
-    form = MovieForm
+    form = MovieForm()
     if form.validate_on_submit():
         title = form.title.data
         description = form.description.data

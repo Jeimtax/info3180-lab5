@@ -37,9 +37,17 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
+let csrf_token = ref("");
 let successMessage = ref("");
 let errorMessages = ref([]);
 
+function getCsrfToken() {
+    fetch('/api/v1/csrf-token')
+        .then((response) => response.json())
+        .then((data) => {
+            csrf_token.value = data.csrf_token;
+        })
+}
 
 onMounted(() => {
     getCsrfToken();

@@ -6,7 +6,7 @@ This file creates your application.
 """
 
 from app import app, db
-from flask import render_template, request, jsonify, send_file
+from flask import render_template, request, jsonify, send_file, send_from_directory
 import os
 from app.models import Movies
 from app.forms import MovieForm
@@ -47,6 +47,25 @@ def movies():
         })
     
     return jsonify({'errors': form_errors(form)}), 400
+
+@app.route('/api/v1/movies',methods=['GET'])
+def get_movies():
+    movies = Movies.query.all()
+    movie_list = []
+    for movie in movies:
+        movie_list.append({
+            'id': movie.id,
+            'title': movie.title,
+            'description': movie.description,
+            'poster': f'/api/v1/posters/{movie.poster}'
+        })
+    return jsonify({'movies': movie_list})
+
+@app.route('/api/v1/posters/<filename>', methods=['GET'])
+def get_poster(filename):
+    upload_folder = os.path.join(os.getcwd(), app.config['UPLOAD_FOLDER'])
+    return send_from_directory(upload_folder, filename)
+
 
 @app.route('/api/v1/csrf-token', methods=['GET'])
 def get_csrf():
